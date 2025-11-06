@@ -1,0 +1,116 @@
+[
+  {
+    "pitch": 12.37206,
+    "yaw": -81.35355,
+    "thumbSrc": "images/thumbs/IMG_1727.JPG",
+    "thumbAlt": "IMG_1727",
+    "fullSrc": "images/fulls/IMG_1727.JPG",
+    "title": "Plane",
+    "caption": "",
+    "desc": "Clouds in Flight",
+    "date": "2015:11:02"
+  },
+
+  {
+    "pitch": 34.0046,
+    "yaw": -77.90256,
+    "thumbSrc": "images/thumbs/IMG_0359.JPG",
+    "thumbAlt": "IMG_0359",
+    "fullSrc": "images/fulls/IMG_0359.JPG",
+    "title": "Crab",
+    "caption": "Moltedo Crab",
+    "desc": "New Jersey Shore",
+    "date": "2019:07:02"
+  },
+  
+  {
+    "pitch": 37.65481,
+    "yaw": -121.87185,
+    "thumbSrc": "images/thumbs/IMG_20150407_121606.jpg",
+    "thumbAlt": "IMG_20150407_121606",
+    "fullSrc": "images/fulls/IMG_20150407_121606.jpg",
+    "title": "Plane",
+    "caption": "Clouds over San Jose",
+    "desc": "Aerial view of San Jose from a plane",
+    "date": "2015:04:07"
+  },
+  {
+    "pitch": 37.18493,
+    "yaw": -121.82925,
+    "thumbSrc": "images/thumbs/IMG_1015.JPG",
+    "thumbAlt": "IMG_1015",
+    "fullSrc": "images/fulls/IMG_1015.JPG",
+    "title": "IMG_1015",
+    "caption": "Hiking Trail",
+    "desc": "Trail and rock formations in Henry Coe State Park",
+    "date": "2020:03:24"
+  },
+  {
+    "pitch": 37.36452,
+    "yaw": -121.92321,
+    "thumbSrc": "images/thumbs/IMG_20150409_171214.jpg",
+    "thumbAlt": "IMG_20150409_171214",
+    "fullSrc": "images/fulls/IMG_20150409_171214.jpg",
+    "title": "IMG_20150409_171214",
+    "caption": "Bus ride",
+    "desc": "Where is everyone?",
+    "date": "2015:04:10"
+  },
+  {
+    "pitch": 37.22205,
+    "yaw": -121.87957,
+    "thumbSrc": "images/thumbs/IMG_9702.JPG",
+    "thumbAlt": "IMG_9702",
+    "fullSrc": "images/fulls/IMG_9702.JPG",
+    "title": "IMG_9702",
+    "caption": "Snowy Hills",
+    "desc": "Snow on the Hills",
+    "date": "2019:02:05"
+  },
+  {
+    "pitch": 40.74243,
+    "yaw": -74.00399,
+    "thumbSrc": "images/thumbs/IMG_20150408_194018.jpg",
+    "thumbAlt": "IMG_20150408_194018",
+    "fullSrc": "images/fulls/IMG_20150408_194018.jpg",
+    "title": "IMG_20150408_194018",
+    "caption": "Model Ship",
+    "desc": "Luxury model ship in the New York Maritime Museum",
+    "date": "2015:04:08"
+  },
+  {
+    "pitch": 37.57237,
+    "yaw": -121.6893,
+    "thumbSrc": "images/thumbs/IMG_8550.JPG",
+    "thumbAlt": "IMG_8550",
+    "fullSrc": "images/fulls/IMG_8550.JPG",
+    "title": "IMG_8550",
+    "caption": "Log on Fire",
+    "desc": "Multicolored log burning in a fire pit",
+    "date": "2018:07:25"
+  },
+  {
+    "pitch": 37.28171,
+    "yaw": -121.93666,
+    "thumbSrc": "images/thumbs/IMG_3821.JPG",
+    "thumbAlt": "IMG_3821",
+    "fullSrc": "images/fulls/IMG_3821.JPG",
+    "title": "IMG_3821",
+    "caption": "Kiting",
+    "desc": "Kite flying at Pfeiffer beach",
+    "date": "2016:06:01"
+  },
+ 
+  {
+    "pitch": -20.21476,
+    "yaw": -70.15196,
+    "thumbSrc": "images/thumbs/IMG_1952.JPG",
+    "thumbAlt": "IMG_1952",
+    "fullSrc": "images/fulls/IMG_1952.JPG",
+    "title": "IMG_1952",
+    "caption": "The group in Chile",
+    "desc": "Downtime after Paragliding in Chile",
+    "date": "2015:11:09"
+  }
+  
+]

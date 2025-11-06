@@ -1,181 +1,200 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Pano Demo - Derek1</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
-    <style>
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        #panorama {
-            width: 100%;
-    
-            
-            height: 100%;
-
-        }
-
-        .custom-hotspot {
-            width: 250px;
-            /* Initial width - matches JS default to avoid jump */
-            border: 2px solid white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-            /* Light for no lag */
-            cursor: pointer;
-            will-change: transform;
-            /* No transition/hover - ultra-smooth on fast pan */
-        }
-
-        .custom-hotspot img {
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-            /* Preserve aspect, no mangle */
-            display: block;
-        }
-
-        #popup {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, .5);
-            max-width: 90%;
-            max-height: 90%;
-            overflow: auto;
-            z-index: 9999;
-            text-align: center;
-        }
-
-        #popup img {
-            max-width: 100%;
-            border-radius: 8px;
-            margin: 1rem 0;
-        }
-
-        .close {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            font-size: 2rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>Froogle Earth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.pannellum.org/2.5/pannellum.css"/>
+  <script src="https://cdn.pannellum.org/2.5/pannellum.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+    #panorama { width: 100%; height: 100vh; position: relative; }
+    /* UI Button – absolute, above canvas */
+    #dayNightBtn {
+      position: absolute;
+      top: 20px;
+      left: 120px; /* 20px right of zoom button */
+      z-index: 1000;
+      background: rgba(0,0,0,0.75);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+      transition: background 0.2s;
+      user-select: none;
+    }
+    #dayNightBtn:hover {
+      background: rgba(0,0,0,0.95);
+    }
+    /* Hotspot style (from your code) */
+    .custom-hotspot {
+      width: 250px; /* Initial width - matches JS default to avoid jump */
+      border: 2px solid white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2); /* Light for no lag */
+      cursor: pointer;
+      will-change: transform; /* No transition/hover - ultra-smooth on fast pan */
+    }
+    .custom-hotspot img {
+      width: 100%;
+      height: auto;
+      object-fit: contain; /* Preserve aspect, no mangle */
+      display: block;
+    }
+    /* Popup style from your code */
+    #popup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, .5);
+      max-width: 90%;
+      max-height: 90%;
+      overflow: auto;
+      z-index: 9999;
+      text-align: center;
+    }
+    #popup img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+    .close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 2rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
-
 <body>
-    <div id="panorama"></div>
-    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
-    <script>
-        const viewer = pannellum.viewer('panorama', {
-            "type": "equirectangular",
-            //"panorama": "<PARM PATH>filename.jpg",
-            "panorama": "pano/dp-goat-rock-pano.jpg",
-            //"panorama": "pano/alamy-gallery.jpg",
+  <div id="panorama"></div>
+  <!-- Day/Night Toggle Button (UI, not hotspot) -->
+  <div id="dayNightBtn">Day View</div>
+  <script>
+    const DAY_IMAGE = "pano/world.topo.bathy.200407.3x5400x2700.jpg";
+    const NIGHT_IMAGE = "pano/earth_lights_lrg.jpg";
 
-            //"panorama": "pano/dunlap.jpg",
+    let viewer;
+    let isDay = true;
 
-            "autoLoad": true,
-            "hfov": 150,
-            "pitch": 0,
-            "yaw": 0,
-            "hotSpotDebug": false,
-            // Limit vertical viewing range to preserve the "flatter" / less-spherical behavior
-            // that was used previously. If you later want full poles visible, set to -90..90
-            "minPitch": -60,
-            "maxPitch": 60,
-            "hotSpots": [
-
-                //  Hotspot
-                {
-                    "pitch": 30, // pitch: <Y>numeric degrees up/down
-                    "yaw": 15,  // yaw: <X>numeric degrees left/right
-                    "type": "info",
-                    "cssClass": "pnlm-hotspot-base pnlm-hotspot pnlm-info pnlm-pointer custom-hotspot",
-                    "createTooltipFunc": function (hotSpotDiv, args) {
-                        hotSpotDiv.innerHTML = '<img src="images/thumbs/IMG20241007114333.jpg" alt="On Branch">';
-                        const img = hotSpotDiv.querySelector('img');
-                        img.onload = function () {
-                            const ratio = this.naturalHeight / this.naturalWidth;
-                            hotSpotDiv.style.width = '75px'; // Override with desired thumb width
-                            hotSpotDiv.style.height = (75 * ratio) + 'px'; // Dynamic height based on new width
-                            console.log("Eagle thumb aspect fixed: " + ratio); // DIAGNOSTIC
-                            viewer.setPitch(viewer.getPitch() + 0.0001); // Minor tweak to force redraw
-                            viewer.setPitch(viewer.getPitch() - 0.0001); // Reset to trigger position update
-                        };
-                    },
-                    "createTooltipArgs": {},
-                    "clickHandlerFunc": function () {
-                        console.log("On Branch clicked!");
-                        showPopup("Eagle", "images/fulls/IMG20241007114333.jpg", "Oil on canvas",
-                        "A majestic eagle perched on a rocky outcrop, symbolizing strength and freedom."
-                        );
-                    }
-                },
-                // Hawk Hotspot
-                {
-                    "pitch": 3, // pitch: <Y>numeric degrees up/down
-                    "yaw": -30,  // yaw: <X>numeric degrees left/right
-
-                    "type": "info",
-                    "cssClass": "pnlm-hotspot-base pnlm-hotspot pnlm-info pnlm-pointer custom-hotspot",
-                    "createTooltipFunc": function (hotSpotDiv, args) {
-                        hotSpotDiv.innerHTML = '<img src="images/thumbs/IMG20241007125824_01.jpg" alt="Hawkish Thoughts">';
-                        const img = hotSpotDiv.querySelector('img');
-                        img.onload = function () {
-                            const ratio = this.naturalHeight / this.naturalWidth;
-                            hotSpotDiv.style.width = '75px'; // Override with desired thumb width
-                            hotSpotDiv.style.height = (75 * ratio) + 'px'; // Dynamic height based on new width
-                            console.log("Hawk thumb aspect fixed: " + ratio); // DIAGNOSTIC
-                            viewer.setPitch(viewer.getPitch() + 0.0001); // Minor tweak to force redraw
-                            viewer.setPitch(viewer.getPitch() - 0.0001); // Reset to trigger position update
-                        };
-                    },
-                    "createTooltipArgs": {},
-                    "clickHandlerFunc": function () {
-                        console.log("Hawk clicked!");
-                        //<button class="close" onclick="this.parentElement.remove()">x</button>
-                        showPopup("Hawkish Thoughts",
-                            "images/fulls/IMG20241007125824_01.jpg",
-                            "Digital",
-                            "<h2>What I Do"
-                            + "</h2><p>Lorem ipsum dolor sit amet et sapien sed elementum egestas dolore condimentum"
-                            + "Fusce blandit ultrices sapien, in accumsan orci rhoncus eu. Sed sodales venenatis arc"
-                            + "id varius justo euismod in. Curabitur egestas consectetur magna.</p>"
-                            + "A depiction of a hawk soaring through the sky, symbolizing freedom and vision."
-                        );
-                    }
-                }
-            ],
-        });
-        function showPopup(title, img, caption, desc) {
-            const old = document.getElementById('popup');
-            if (old) old.remove();
-            const div = document.createElement('div');
-            div.id = 'popup';
-            div.innerHTML = `
-                <button class="close" onclick="this.parentElement.remove()">x</button>
-                <h2 style="margin:0 0 .5rem">${title}</h2>
-               <img src="${img}" alt="${title}">
-               <p style="margin:0.5rem 0 0; font-style:italic; color:#666">${caption}${desc}</p>
-               `;
-            document.body.appendChild(div);
+    // Function to generate hotspot config from JSON data
+    function generateHotspot(hotspotData) {
+      return {
+        "pitch": hotspotData.pitch,
+        "yaw": hotspotData.yaw,
+        "type": "info",
+        "cssClass": "pnlm-hotspot-base pnlm-hotspot pnlm-info pnlm-pointer custom-hotspot",
+        "createTooltipFunc": function (hotSpotDiv, args) {
+          hotSpotDiv.innerHTML = `<img src="${hotspotData.thumbSrc}" alt="${hotspotData.thumbAlt}">`;
+          const img = hotSpotDiv.querySelector('img');
+          img.onload = function () {
+            const ratio = this.naturalHeight / this.naturalWidth;
+            hotSpotDiv.style.width = '75px'; // Override with desired thumb width
+            hotSpotDiv.style.height = (75 * ratio) + 'px'; // Dynamic height based on new width
+            console.log("Thumb aspect fixed: " + ratio); // DIAGNOSTIC
+            viewer.setPitch(viewer.getPitch() + 0.0001); // Minor tweak to force redraw
+            viewer.setPitch(viewer.getPitch() - 0.0001); // Reset to trigger position update
+          };
+        },
+        "createTooltipArgs": {},
+        "clickHandlerFunc": function () {
+          console.log(`${hotspotData.title} clicked!`);
+          showPopup(hotspotData.title, hotspotData.fullSrc, hotspotData.caption, hotspotData.desc);
         }
-    </script>
-</body>
+      };
+    }
 
+    // Load hotspots from JSON and initialize Pannellum
+    fetch('hotspots.json') // Replace with your JSON path
+      .then(response => response.json())
+      .then(hotspots => {
+        const hotspotConfigs = hotspots.map(generateHotspot);
+
+        viewer = pannellum.viewer('panorama', {
+          "default": {
+            "firstScene": "day",
+            "autoLoad": true,
+            "compass": true,
+            "northOffset": 0,
+            "haov": 360,
+            "vaov": 180,
+            "minHfov": 40,
+            "maxHfov": 120
+          },
+          "scenes": {
+            "day": {
+              "type": "equirectangular",
+              "panorama": DAY_IMAGE,
+              "pitch": 40,   // Center on North America latitude
+              "yaw": -100,   // Center on North America longitude
+              "hfov": 120,   // Wide initial view
+              "hotSpots": hotspotConfigs // Loaded from JSON
+            },
+            "night": {
+              "type": "equirectangular",
+              "panorama": NIGHT_IMAGE,
+              "pitch": 40,   // Center on North America latitude
+              "yaw": -100,   // Center on North America longitude
+              "hfov": 120,   // Wide initial view
+              "hotSpots": hotspotConfigs // Same hotspots for night (consistent)
+            }
+          }
+        });
+
+        // Day/Night Toggle – UI Button Click
+        document.getElementById('dayNightBtn').addEventListener('click', function () {
+          const currentPitch = viewer.getPitch();
+          const currentYaw = viewer.getYaw();
+          const currentHfov = viewer.getHfov();
+
+          isDay = !isDay;
+          const newScene = isDay ? "day" : "night";
+          const label = isDay ? "Day View" : "Night View";
+
+          viewer.loadScene(newScene, currentPitch, currentYaw, currentHfov);
+
+          this.textContent = label;
+        });
+
+        // Optional: Keyboard D/N
+        document.addEventListener('keydown', e => {
+          if (e.key.toLowerCase() === 'd' || e.key.toLowerCase() === 'n') {
+            document.getElementById('dayNightBtn').click();
+          }
+        });
+      })
+      .catch(error => {
+        console.error('Error loading hotspots.json:', error);
+        // Fallback: Use hardcoded hotspots if JSON fails
+        const fallbackHotspots = [ /* Your original hardcoded hotspots here */ ];
+        // Initialize with fallback...
+      });
+
+    // Show Popup Function (from your code)
+    function showPopup(title, img, caption, desc) {
+      const old = document.getElementById('popup');
+      if (old) old.remove();
+      const div = document.createElement('div');
+      div.id = 'popup';
+      div.innerHTML = `
+        <button class="close" onclick="this.parentElement.remove()">x</button>
+        <h2 style="margin:0 0 .5rem">${title}</h2>
+        <img src="${img}" alt="${title}">
+        <p style="margin:0.5rem 0 0; font-style:italic; color:#666">${caption}${desc}</p>
+      `;
+      document.body.appendChild(div);
+    }
+  </script>
+</body>
 </html>
